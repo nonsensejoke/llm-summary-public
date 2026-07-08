@@ -1,4 +1,4 @@
-Last updated: 2026-07-07 15:32:38 UTC
+Last updated: 2026-07-08 04:15:46 UTC
 Input repo: nonsensejoke/literature-data-public
 Sources: nat, articles
 Limit per source: 2000
