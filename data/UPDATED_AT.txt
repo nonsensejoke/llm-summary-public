@@ -1,4 +1,9 @@
-Last updated: 2026-08-15 01:56:59 UTC
+Last updated: 2026-09-15 05:52:50 UTC
 Input repo: nonsensejoke/literature-data-public
-Sources: nat, articles
+Sources: nat, articles, preprint
 Limit per source: 2000
+OpenAI token accounting: process-local input + output usage; OpenRouter excluded
+Source metrics:
+- nat: ingested_articles=0, elapsed=00:00:00, openai_tokens=0 (input=0, output=0)
+- articles: ingested_articles=4, elapsed=00:00:43, openai_tokens=10767 (input=2994, output=7773)
+- preprint: ingested_articles=9, elapsed=00:00:40, openai_tokens=26692 (input=8287, output=18405)
