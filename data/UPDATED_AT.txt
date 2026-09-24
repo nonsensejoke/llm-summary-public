@@ -1,4 +1,4 @@
-Last updated: 2026-09-24 05:16:57 UTC
+Last updated: 2026-09-24 17:39:16 UTC
 Run status: success
 Input repo: nonsensejoke/literature-data-public
 Sources: nat, articles, preprint
@@ -6,5 +6,5 @@ Limit per source: 2000
 OpenAI token accounting: process-local input + output usage; OpenRouter excluded
 Source metrics:
 - nat: ingested_articles=0, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:00:00, openai_tokens=0 (input=0, output=0)
-- articles: ingested_articles=60, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:01:09, openai_tokens=172379 (input=50564, output=121815)
-- preprint: ingested_articles=15, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:00:40, openai_tokens=47416 (input=13685, output=33731)
+- articles: ingested_articles=115, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:02:06, openai_tokens=312114 (input=91604, output=220510)
+- preprint: ingested_articles=398, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:06:49, openai_tokens=1156909 (input=347322, output=809587)
