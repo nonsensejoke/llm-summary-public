@@ -1,6 +1,7 @@
 # 摘要 SQLite 数据库分卷
 
-Git 保存 `article_summaries.db` 和 `article_summaries_kr.db` 的二进制分卷，
+Git 保存 `article_summaries.db`、`article_summaries_kr.db` 及可选的
+`article_summaries_en.db` 的二进制分卷，
 每卷最多 **48 MiB（50,331,648 字节）**。分卷本身不是 SQLite，使用前须还原。
 工具仅使用 Python 标准库，不依赖摘要程序或模型 API 配置。
 
@@ -8,11 +9,12 @@ Git 保存 `article_summaries.db` 和 `article_summaries_kr.db` 的二进制分�
 data/
   article_summaries.db.parts/manifest.json, part-00000, ...
   article_summaries_kr.db.parts/manifest.json, part-00000, ...
+  article_summaries_en.db.parts/manifest.json, part-00000, ...  # 首次英文运行后生成
   UPDATED_AT.txt
 scripts/db_volumes.py
 ```
 
-还原后仍使用原来的 `data/article_summaries.db` 和 `data/article_summaries_kr.db`。
+还原后使用对应的 `data/*.db` 工作库。
 所有表、索引、记录 ID、摘要版本、请求日志及 token 统计均保留。
 完整数据库、WAL、SHM、journal 和本地备份不提交 Git。分卷不使用压缩或 Git LFS，
 也不改变现有 Git 历史及其体积。
@@ -22,7 +24,7 @@ scripts/db_volumes.py
 在仓库根目录执行（公开仓库也使用相同命令）：
 
 ```bash
-# 新 checkout：还原两库。
+# 新 checkout：还原中韩两库，以及存在分卷的英文库。
 python3 scripts/db_volumes.py restore
 
 # 可重复 --database，只操作指定库。
@@ -34,12 +36,19 @@ python3 scripts/db_volumes.py verify
 # 本地摘要或翻译结束后，显式更新需要提交的分卷。
 python3 scripts/db_volumes.py pack --database article_summaries.db
 python3 scripts/db_volumes.py pack --database article_summaries_kr.db
+python3 scripts/db_volumes.py pack --database article_summaries_en.db
 ```
 
-两个 CLI 和 shell 入口会自动还原缺失的工作库，保留已有本地数据库。
+现有中韩 CLI 和 shell 入口会自动还原缺失的工作库，保留已有本地数据库。
 默认工作库及其分卷都缺失时会报错；显式指定全新自定义输出路径仍允许创建空库。
 韩语翻译先读取还原后的目标库以跳过已翻译版本；`--dry-run` 在临时目录检查缺失的
 目标库，不创建目标工作库、不调用模型 API。直接使用 Python 的存储类时由调用者先还原。
+
+英文入口 `summary_ingest ingest-en` 独立读取原始论文并通过 Codex CLI 总结，
+不依赖中韩摘要库。默认 `data/article_summaries_en.db` 首次运行可创建；有分卷时先还原。
+英文 `--dry-run` 始终使用临时快照，不调用 Codex、不创建或修改目标工作库。
+英文库未建立时，无参数的分卷操作不会要求它存在；仅有英文分卷的仓库可以独立还原。
+显式 `--database article_summaries_en.db` 不会跳过缺失或损坏的英文分卷。
 
 打包通过 SQLite backup API 生成一致性快照，包含 WAL 中已提交的记录。
 本地抓取、打包和 Git 更新请串行运行。不要直接删除 WAL、SHM。
@@ -85,7 +94,7 @@ python3 -m summary_ingest.database_files --literature-repo ./literature-data-pub
 | 字段 | 含义 |
 | --- | --- |
 | `format_version` | 整数 `1` |
-| `database` | 对应的两个摘要数据库文件名之一 |
+| `database` | 对应的三个摘要数据库文件名之一 |
 | `size_bytes`、`sha256` | 完整数据库快照大小与 SHA-256 |
 | `chunk_size_bytes` | 默认 `50331648`，不超过 48 MiB |
 | `parts` | 按顺序排列的 `{name, size_bytes, sha256}` |
@@ -95,7 +104,7 @@ python3 -m summary_ingest.database_files --literature-repo ./literature-data-pub
 
 ## Actions 与首次切换
 
-两个 workflow 共享并发组，检出最新 `main`，先还原两库和文献输入，运行任务后
+现有中韩两个 workflow 共享并发组，检出最新 `main`，先还原两库和文献输入，运行任务后
 仅打包对应语言的库。通过校验后提交私有分卷，再同步公开仓库。
 模型任务部分失败时先保存成功记录再报告失败；还原、打包、校验或私有推送失败时停止公开发布。
 
@@ -104,6 +113,11 @@ python3 -m summary_ingest.database_files --literature-repo ./literature-data-pub
 停止跟踪完整 `.db`；后续只更新当前语言的分卷。已有公开 README 保留。
 `UPDATED_AT.txt` 原有采集指标保留，`Database volumes:` 段记录还原后的大小及卷数；
 韩语流程只更新该段，不重写中文采集时间或指标。
+
+新增英文 workflow 仅支持手动触发，并使用同一发布并发组。它只准备论文输入和英文目标库，
+只打包、暂存及同步英文分卷；不要求中韩库存在，也不触发中韩整组迁移。
+英文发布保留中韩已跟踪的完整库及分卷，后续中韩流程仍按原规则完成两库迁移。
+元数据仅更新当前选择的库，保留其他库已有的元数据和采集指标。
 
 私有仓库手动暂存与 workflow 使用同一工具：
 

@@ -1,0 +1,14 @@
+{
+  "format_version": 1,
+  "database": "article_summaries_en.db",
+  "size_bytes": 81920,
+  "sha256": "1baa33efacb0bdb19ba4ff662422df502b0daa47ee10367995dd0d058f2f20d6",
+  "chunk_size_bytes": 50331648,
+  "parts": [
+    {
+      "name": "part-00000",
+      "size_bytes": 81920,
+      "sha256": "1baa33efacb0bdb19ba4ff662422df502b0daa47ee10367995dd0d058f2f20d6"
+    }
+  ]
+}

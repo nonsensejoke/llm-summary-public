@@ -12,7 +12,9 @@ import sys
 import tempfile
 from contextlib import closing
 
-DATABASES = ("article_summaries.db", "article_summaries_kr.db")
+LEGACY_DATABASES = ("article_summaries.db", "article_summaries_kr.db")
+ENGLISH_DATABASE = "article_summaries_en.db"
+DATABASES = (*LEGACY_DATABASES, ENGLISH_DATABASE)
 CHUNK_SIZE = 48 * 1024 * 1024
 SIDECARS = ("-wal", "-shm", "-journal")
 BLOCK_SIZE = 1024 * 1024
@@ -20,6 +22,23 @@ BLOCK_SIZE = 1024 * 1024
 
 class VolumeError(ValueError):
     pass
+
+
+def default_databases(data_dir: Path, *, command: str = "restore") -> tuple[str, ...]:
+    """Select present languages; absent optional English data is never required.
+
+    Legacy checkouts still require both legacy databases. English-only checkouts
+    can use the standalone tool without acquiring either legacy database.
+    """
+    present = tuple(
+        name for name in DATABASES
+        if volume_path(data_dir, name).exists() or volume_path(data_dir, name).is_symlink()
+        or (command == "pack" and (data_dir / name).is_file())
+    )
+    legacy_present = any(name in present for name in LEGACY_DATABASES)
+    if legacy_present or not present:
+        return (*LEGACY_DATABASES, ENGLISH_DATABASE) if ENGLISH_DATABASE in present else LEGACY_DATABASES
+    return present
 
 
 def sha256(path: Path) -> str:
@@ -220,13 +239,13 @@ def main(argv: list[str] | None = None) -> int:
     for command in ("pack", "restore", "verify"):
         subparser = subparsers.add_parser(command)
         subparser.add_argument("--data-dir", type=Path, default=Path("data"))
-        subparser.add_argument("--database", choices=DATABASES, action="append", help="Repeat to select databases; default: both")
+        subparser.add_argument("--database", choices=DATABASES, action="append", help="Repeat to select databases; default: present languages (legacy pair required together)")
         if command == "restore":
             subparser.add_argument("--force", action="store_true", help="Replace differing files; close all SQLite connections first")
             subparser.add_argument("--output-dir", type=Path, help="Restore into a separate directory, e.g. a release staging directory")
     args = parser.parse_args(argv)
     try:
-        for database in dict.fromkeys(args.database or DATABASES):
+        for database in dict.fromkeys(args.database or default_databases(args.data_dir, command=args.command)):
             if args.command == "pack":
                 manifest = pack_database(args.data_dir, database)
             elif args.command == "restore":
