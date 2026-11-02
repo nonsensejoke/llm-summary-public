@@ -11,3 +11,4 @@ Source metrics:
 
 Database volumes:
 article_summaries.db: 199794688 bytes (190.54 MiB), 4 part(s)
+article_summaries_en.db: 191758336 bytes (182.88 MiB), 4 part(s)
