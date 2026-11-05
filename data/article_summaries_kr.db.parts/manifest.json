@@ -1,29 +1,29 @@
 {
   "format_version": 1,
   "database": "article_summaries_kr.db",
-  "size_bytes": 157712384,
-  "sha256": "eb6c6e2198d1a56c862825bbc91b8a39d1e7075d253e205b69c4854052c4e967",
+  "size_bytes": 159559680,
+  "sha256": "3e3c955a844984d803d49aebbe2e432fe502839026302dceb394ce70d95d0fee",
   "chunk_size_bytes": 50331648,
   "parts": [
     {
       "name": "part-00000",
       "size_bytes": 50331648,
-      "sha256": "c4346f661040cdd31a3603dda33db15df2eed1283cf71d06dd3e1b5f51b806bc"
+      "sha256": "9bebc7fa2e2160e071d30c1d7f47d310b8a3abeefaff729f8c8df7ef2908fc8f"
     },
     {
       "name": "part-00001",
       "size_bytes": 50331648,
-      "sha256": "9a914e49240f80cb31e4ae2669413507d3f58bb9bbd59fd6c2a756127a7747c4"
+      "sha256": "492dae82e869a8c3d5a45c1719840fa675c9cc51e13da05fdff42fc09ff69ad8"
     },
     {
       "name": "part-00002",
       "size_bytes": 50331648,
-      "sha256": "11d64ff026b33868087e17fac26434472bdcc2774d1434ce3fe656e63f7096a9"
+      "sha256": "0c593e55720276b7b451d351c7541bd6d68a40c3c7c0f71288648c84452e9bc3"
     },
     {
       "name": "part-00003",
-      "size_bytes": 6717440,
-      "sha256": "c88ec2da69b8069936d972d8ef4e49b4e202535895f88f18c61394fcbeb8e05b"
+      "size_bytes": 8564736,
+      "sha256": "0f05914444a5d6553b34a435f1acd702406673d57aef0daaf58fb35bf529807e"
     }
   ]
 }
