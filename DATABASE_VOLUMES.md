@@ -1,7 +1,7 @@
 # 摘要 SQLite 数据库分卷
 
 Git 保存 `article_summaries.db`、`article_summaries_kr.db` 及可选的
-`article_summaries_en.db` 的二进制分卷，
+`article_summaries_en.db`、`article_summaries_ja.db` 的二进制分卷，
 每卷最多 **48 MiB（50,331,648 字节）**。分卷本身不是 SQLite，使用前须还原。
 工具仅使用 Python 标准库，不依赖摘要程序或模型 API 配置。
 
@@ -10,6 +10,7 @@ data/
   article_summaries.db.parts/manifest.json, part-00000, ...
   article_summaries_kr.db.parts/manifest.json, part-00000, ...
   article_summaries_en.db.parts/manifest.json, part-00000, ...  # 首次英文运行后生成
+  article_summaries_ja.db.parts/manifest.json, part-00000, ...  # 首次日文运行后生成
   UPDATED_AT.txt
 scripts/db_volumes.py
 ```
@@ -24,7 +25,7 @@ scripts/db_volumes.py
 在仓库根目录执行（公开仓库也使用相同命令）：
 
 ```bash
-# 新 checkout：还原中韩两库，以及存在分卷的英文库。
+# 新 checkout：还原中韩两库，以及存在分卷的英文、日文库。
 python3 scripts/db_volumes.py restore
 
 # 可重复 --database，只操作指定库。
@@ -37,6 +38,7 @@ python3 scripts/db_volumes.py verify
 python3 scripts/db_volumes.py pack --database article_summaries.db
 python3 scripts/db_volumes.py pack --database article_summaries_kr.db
 python3 scripts/db_volumes.py pack --database article_summaries_en.db
+python3 scripts/db_volumes.py pack --database article_summaries_ja.db
 ```
 
 现有中韩 CLI 和 shell 入口会自动还原缺失的工作库，保留已有本地数据库。
@@ -49,6 +51,15 @@ python3 scripts/db_volumes.py pack --database article_summaries_en.db
 英文 `--dry-run` 始终使用临时快照，不调用 Codex、不创建或修改目标工作库。
 英文库未建立时，无参数的分卷操作不会要求它存在；仅有英文分卷的仓库可以独立还原。
 显式 `--database article_summaries_en.db` 不会跳过缺失或损坏的英文分卷。
+
+日文入口 `summary_ingest ingest-ja-api` 从论文原始标题和摘要生成日文译文及三个层次的摘要，
+写入独立的 `data/article_summaries_ja.db`（`target_language=ja-JP`），复用现有 OpenAI API 路径。
+日文库同样首次可创建、有分卷时先还原；dry-run 使用临时快照，不调用模型或用量 API，
+不创建或修改目标工作库。日文是可选库，旧 checkout 不要求它存在。
+仅有英文或日文分卷的仓库可独立还原；两者共存时均选中。
+默认 pack 选择存在的工作库或分卷，restore/verify 选择存在的分卷。
+只要选中了任一旧版中韩库，仍要求中韩成对；没有任何可选库时保留旧版默认选择。
+显式 `--database article_summaries_ja.db` 不会忽略缺失或损坏的日文分卷。
 
 打包通过 SQLite backup API 生成一致性快照，包含 WAL 中已提交的记录。
 本地抓取、打包和 Git 更新请串行运行。不要直接删除 WAL、SHM。
@@ -94,7 +105,7 @@ python3 -m summary_ingest.database_files --literature-repo ./literature-data-pub
 | 字段 | 含义 |
 | --- | --- |
 | `format_version` | 整数 `1` |
-| `database` | 对应的三个摘要数据库文件名之一 |
+| `database` | 对应的四个摘要数据库文件名之一 |
 | `size_bytes`、`sha256` | 完整数据库快照大小与 SHA-256 |
 | `chunk_size_bytes` | 默认 `50331648`，不超过 48 MiB |
 | `parts` | 按顺序排列的 `{name, size_bytes, sha256}` |
@@ -121,6 +132,11 @@ python3 -m summary_ingest.database_files --literature-repo ./literature-data-pub
 只打包、暂存及同步英文分卷；不要求中韩库存在，也不触发中韩整组迁移。
 英文发布保留中韩已跟踪的完整库及分卷，后续中韩流程仍按原规则完成两库迁移。
 元数据仅更新当前选择的库，保留其他库已有的元数据和采集指标。
+
+日文 API workflow 接在韩文 API 后，使用同一发布并发组，只准备论文输入和日文目标库，
+只打包、暂存及同步日文分卷，不依赖中韩英文库，也不触发中韩成对迁移。
+日文和英文同为独立可选语言；默认分卷操作包含所有实际存在的可选语言。
+日文运行同样先保存和发布成功部分，再报告生成失败；具体触发和配额交接见 README。
 
 私有仓库手动暂存与 workflow 使用同一工具：
 

@@ -14,7 +14,8 @@ from contextlib import closing
 
 LEGACY_DATABASES = ("article_summaries.db", "article_summaries_kr.db")
 ENGLISH_DATABASE = "article_summaries_en.db"
-DATABASES = (*LEGACY_DATABASES, ENGLISH_DATABASE)
+JAPANESE_DATABASE = "article_summaries_ja.db"
+DATABASES = (*LEGACY_DATABASES, ENGLISH_DATABASE, JAPANESE_DATABASE)
 CHUNK_SIZE = 48 * 1024 * 1024
 SIDECARS = ("-wal", "-shm", "-journal")
 BLOCK_SIZE = 1024 * 1024
@@ -25,10 +26,10 @@ class VolumeError(ValueError):
 
 
 def default_databases(data_dir: Path, *, command: str = "restore") -> tuple[str, ...]:
-    """Select present languages; absent optional English data is never required.
+    """Select present languages; absent optional languages are never required.
 
-    Legacy checkouts still require both legacy databases. English-only checkouts
-    can use the standalone tool without acquiring either legacy database.
+    Legacy checkouts still require both legacy databases. Optional-language-only
+    checkouts can use the standalone tool without either legacy database.
     """
     present = tuple(
         name for name in DATABASES
@@ -37,7 +38,7 @@ def default_databases(data_dir: Path, *, command: str = "restore") -> tuple[str,
     )
     legacy_present = any(name in present for name in LEGACY_DATABASES)
     if legacy_present or not present:
-        return (*LEGACY_DATABASES, ENGLISH_DATABASE) if ENGLISH_DATABASE in present else LEGACY_DATABASES
+        return (*LEGACY_DATABASES, *(name for name in present if name not in LEGACY_DATABASES))
     return present
 
 

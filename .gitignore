@@ -20,3 +20,16 @@ __pycache__/
 *.db-journal
 .db-volumes-*/
 __pycache__/
+
+# SQLite working files (restored from data/*.db.parts).
+/data/*
+!/data/article_summaries.db.parts/
+!/data/article_summaries_kr.db.parts/
+!/data/article_summaries_en.db.parts/
+!/data/article_summaries_ja.db.parts/
+!/data/UPDATED_AT.txt
+*.db-wal
+*.db-shm
+*.db-journal
+.db-volumes-*/
+__pycache__/
