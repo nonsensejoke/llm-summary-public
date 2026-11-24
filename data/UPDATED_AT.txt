@@ -13,3 +13,4 @@ Database volumes:
 article_summaries.db: 267415552 bytes (255.03 MiB), 6 part(s)
 article_summaries_kr.db: 262995968 bytes (250.81 MiB), 6 part(s)
 article_summaries_en.db: 260222976 bytes (248.17 MiB), 6 part(s)
+article_summaries_ja.db: 113934336 bytes (108.66 MiB), 3 part(s)
