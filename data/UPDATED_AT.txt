@@ -1,16 +1,13 @@
-Last updated: 2026-11-25 09:33:39 UTC
+Last updated: 2026-11-25 22:13:11 UTC
 Run status: success
 Input repo: nonsensejoke/literature-data-public
 Sources: nat, articles, preprint
 Limit per source: 2000
 OpenAI token accounting: process-local input + output usage; OpenRouter excluded
 Source metrics:
-- nat: ingested_articles=0, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:00:00, openai_tokens=0 (input=0, output=0)
-- articles: ingested_articles=147, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:03:32, openai_tokens=426585 (input=125249, output=301336)
-- preprint: ingested_articles=1252, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:31:39, openai_tokens=3734340 (input=1112468, output=2621872)
+- nat: ingested_articles=0, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:00:01, openai_tokens=0 (input=0, output=0)
+- articles: ingested_articles=94, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:02:14, openai_tokens=260540 (input=74557, output=185983)
+- preprint: ingested_articles=752, failed=0, quota_blocked=false, provider_stopped=false, command_exit_code=0, elapsed=00:16:00, openai_tokens=2244474 (input=667790, output=1576684)
 
 Database volumes:
-article_summaries.db: 273678336 bytes (261.00 MiB), 6 part(s)
-article_summaries_kr.db: 266887168 bytes (254.52 MiB), 6 part(s)
-article_summaries_en.db: 264863744 bytes (252.59 MiB), 6 part(s)
-article_summaries_ja.db: 119828480 bytes (114.28 MiB), 3 part(s)
+article_summaries.db: 277438464 bytes (264.59 MiB), 6 part(s)
